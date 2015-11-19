@@ -50,12 +50,13 @@
 
   /** @ngInject */
   function StateController(logger, $q, VIEW_MODES, CatalogService, Tag,
-                           Compare, TAG_QUERY_LIMIT, $stateParams, WizardService) {
+                           Compare, TAG_QUERY_LIMIT, $stateParams, WizardService, $previousState) {
     var vm = this;
 
     vm.title = 'Marketplace';
     vm.tags = [];
     vm.viewMode = VIEW_MODES.list;
+    vm.projectId = null || $previousState.get().params.projectId;
 
     vm.activate = activate;
     vm.updateCatalog = updateCatalog;
