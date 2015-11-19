@@ -32,9 +32,8 @@
            ng-repeat="product in ::vm.products track by product.id"
            ng-class="{'compare-modal__cell--even': $even}">
         <button type="button"
-                class="btn-rounded"
-                ui-sref="orders.create({productId: product.id})"
-                ng-click="$close()">Order</button>
+                ng-click="vm.addToCart(product)"
+                class="btn-rounded">Add to Cart</button>
       </div>
     </div>
   </div>

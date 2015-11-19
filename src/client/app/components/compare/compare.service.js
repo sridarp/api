@@ -54,13 +54,14 @@
       return self.items.length < MAX_COMPARES && !inList(product);
     }
 
-    function showModal() {
+    function showModal(projectId) {
       var modalOptions = {
         templateUrl: 'app/components/compare/compare-modal.html',
         controller: CompareModalController,
         controllerAs: 'vm',
         resolve: {
-          productList: resolveItems
+          productList: resolveItems,
+          projectId: resolveProjectId
         },
         windowTemplateUrl: 'app/components/common/modal-window.html',
         size: 'compare'
@@ -72,15 +73,21 @@
       function resolveItems() {
         return self.items;
       }
+
+      function resolveProjectId() {
+        return projectId;
+      }
     }
   }
 
   /** @ngInject */
-  function CompareModalController(lodash, productList) {
+  function CompareModalController(lodash, productList, projectId, CartService, CartProjectHelper, $modalInstance) {
     var vm = this;
 
     vm.products = productList;
     vm.rowData = [];
+    vm.projectId = projectId;
+    vm.addToCart = addToCart;
 
     buildData();
 
@@ -125,6 +132,16 @@
 
       function appendProperty(property) {
         vm.rowData.push(data.properties[property]);
+      }
+    }
+
+    function addToCart(product) {
+      $modalInstance.close();
+      vm.addToProject = vm.projectId ? vm.projectId : CartService.defaultProject();
+      if (vm.addToProject) {
+        CartService.add(vm.projectId, product);
+      } else {
+        CartProjectHelper.showModal(vm.projectId, product);
       }
     }
   }

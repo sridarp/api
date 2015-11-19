@@ -8,7 +8,9 @@
   function SelectedProductsDirective() {
     var directive = {
       restrict: 'AE',
-      scope: {},
+      scope: {
+        projectId: '=?'
+      },
       link: link,
       templateUrl: 'app/components/compare/selected-products.html',
       controller: SelectedProductsController,
@@ -41,7 +43,7 @@
       }
 
       function showModal() {
-        Compare.showModal();
+        Compare.showModal(vm.projectId);
       }
 
       function disabled() {

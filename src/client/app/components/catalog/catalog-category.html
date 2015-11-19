@@ -32,8 +32,9 @@
           <computed-monthly-price pricing="row"></computed-monthly-price>
         </td>
         <td class="tables__cell tables__cell--actions">
-          <a ui-sref="orders.create({productId: row.id})" class="tables__action" title="Configure Product">
-            <img src="images/ic_config.png" alt="Configure Product"/>
+          <a ng-click="vm.addToCart(row)"
+             class="tables__action" title="Add Product to Cart">
+            <img src="images/ic_cart.png" alt="Add Product to Cart"/>
           </a>
         </td>
       </tr>
