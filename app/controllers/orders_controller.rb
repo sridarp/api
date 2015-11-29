@@ -29,16 +29,24 @@ class OrdersController < ApplicationController
 
   api :POST, '/orders', 'Make a new service order'
   param :project_id, :number, desc: 'Related project id', required: true
-  param :product_id, :number, desc: 'Related product id', required: true
-  param :service, Hash, required: true do
-    param :name, String, desc: 'Name of the new service', required: true
+  param :products, Array do
+    param :product_id, :number, desc: 'Related product id', required: true
+    param :service, Hash, required: true do
+      param :name, String, desc: 'Name of the new service', required: true
+    end
   end
+
   param_group :answers, ApplicationController
   error code: 422, desc: ParameterValidation::Messages.missing
 
   def create
-    use_case = CreateServiceOrder.perform(current_user, order_params)
-    respond_with use_case.order
+    use_case = Array.new
+    order_params[:products].each do |order|
+      order[:project_id] = params[:project_id]
+      use_case.push(CreateServiceOrder.perform(current_user, order).order)
+    end
+    
+    respond_with use_case
   rescue UseCase::Error => e
     fail_with error: e.message, type: e.class.to_s.split('::').last
   end
@@ -50,10 +58,13 @@ class OrdersController < ApplicationController
   end
 
   def order_params
-    params.permit(:project_id, :product_id, service: [:name], answers: [:value, :value_type, :name]).tap do |o|
-      o[:service]['answers_attributes'] = o.delete(:answers) || []
+    params.permit(:project_id, products: [:product_id, service: [:name], answers: [:value, :value_type, :name]]).tap do |o|
+      o[:products].each do |product|
+        product[:service]['answers_attributes'] = product.delete(:answers) || []
+      end
     end
   end
+
 
   def orders
     @_orders ||= query_with Order.all, :includes, :pagination
