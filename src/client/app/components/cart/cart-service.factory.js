@@ -143,7 +143,8 @@
   }
 
   /** @ngInject */
-  function CartModalController(CartService, CartConfigureHelper, $modalInstance, Toasts, Order, SessionService) {
+  function CartModalController(CartService, CartConfigureHelper, $modalInstance,
+                               Toasts, Order, SessionService, lodash) {
     var vm = this;
 
     vm.remove = remove;
@@ -164,11 +165,15 @@
     }
 
     function checkout() {
-      var projectObject = CartService.items[CartService.defaultProject()];
+      var defaultProject = CartService.defaultProject();
+      var projectObject = CartService.items[defaultProject];
       if (projectObject.orderCount === projectObject.itemCount) {
         if (projectObject.project.budget >= projectObject.total) {
-          projectObject.orders.staff_id = SessionService.id;
-          Order.save(projectObject.orders, saveSuccess, saveError);
+          var projectOrder = {};
+          projectOrder.staff_id = SessionService.id;
+          projectOrder.project_id = defaultProject;
+          projectOrder.products = lodash.values(projectObject.orders);
+          Order.save(projectOrder, saveSuccess, saveError);
         } else {
           Toasts.error('Cart total exceeds project budget, cannot process order.');
         }
@@ -220,7 +225,6 @@
       }
 
       var order = Order.new({product_id: productRow.product.id});
-      order.project_id = project.id;
       order.service.name = configuration.name;
       order.answers = productRow.product.answers;
 

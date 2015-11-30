@@ -10,7 +10,6 @@
 
     Order.defaults = {
       product_id: null,
-      project_id: null,
       service: {
         name: null
       }
