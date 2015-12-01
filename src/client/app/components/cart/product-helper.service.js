@@ -2,10 +2,10 @@
   'use strict';
 
   angular.module('app.components')
-    .factory('CartConfigureHelper', CartConfigureHelperFactory);
+    .service('ProductHelper', ProductHelperService);
 
   /** @ngInject */
-  function CartConfigureHelperFactory($modal) {
+  function ProductHelperService($modal) {
     var service = {
       showModal: showModal
     };
@@ -14,8 +14,8 @@
 
     function showModal(project, productRow) {
       var modalOptions = {
-        templateUrl: 'app/components/cart-configure-helper/cart-configure-helper.html',
-        controller: CartConfigureHelperController,
+        templateUrl: 'app/components/cart/product-helper.html',
+        controller: ProductHelperController,
         controllerAs: 'vm',
         resolve: {
           productDetails: resolveProductDetails,
@@ -43,7 +43,7 @@
   }
 
   /** @ngInject */
-  function CartConfigureHelperController(project, productRow, productDetails) {
+  function ProductHelperController(project, productRow, productDetails) {
     var vm = this;
 
     var product = productRow.product;

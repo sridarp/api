@@ -2,24 +2,23 @@
   'use strict';
 
   angular.module('app.components')
-    .factory('CartProjectHelper', CartProjectHelperFactory);
+    .service('ProjectHelper', ProjectHelperService);
 
   /** @ngInject */
-  function CartProjectHelperFactory($modal, Project) {
+  function ProjectHelperService($modal, Project) {
     var service = {
       showModal: showModal
     };
 
     return service;
 
-    function showModal(projectId, product) {
+    function showModal(product) {
       var modalOptions = {
-        templateUrl: 'app/components/cart-project-helper/cart-project-helper.html',
-        controller: CartProjectHelperController,
+        templateUrl: 'app/components/cart/project-helper.html',
+        controller: ProjectHelperController,
         controllerAs: 'vm',
         resolve: {
           projects: resolveProjects,
-          projectId: resolveProjectId,
           product: resolveProduct
         },
         windowTemplateUrl: 'app/components/common/modal-window.html'
@@ -32,10 +31,6 @@
         return Project.query({approved: true, archived: false}).$promise;
       }
 
-      function resolveProjectId() {
-        return projectId;
-      }
-
       function resolveProduct() {
         return product;
       }
@@ -43,10 +38,9 @@
   }
 
   /** @ngInject */
-  function CartProjectHelperController(projects, projectId, product, $modalInstance, CartService, lodash) {
+  function ProjectHelperController(projects, product, $modalInstance, CartService, SelectedProjectHelper, lodash) {
     var vm = this;
 
-    vm.projectId = projectId;
     vm.selections = {
       projectId: null,
       projectDefault: null
@@ -59,8 +53,18 @@
       initFields();
     }
 
-    // Private
+    function addToCart() {
+      $modalInstance.close();
+      var selectedProject = lodash.find(projects, {'id': vm.selections.projectId});
+      if (vm.selections.projectDefault) {
+        SelectedProjectHelper.selectProject(selectedProject, true);
+      } else {
+        SelectedProjectHelper.selectProject(selectedProject, false);
+      }
+      CartService.add(selectedProject, product);
+    }
 
+    // Private
     function initFields() {
       vm.fields = [
         {
@@ -77,19 +81,11 @@
           key: 'projectDefault',
           type: 'checkbox',
           templateOptions: {
-            label: 'Default Project',
-            checkboxLabel: '  '
+            label: '  ',
+            checkboxLabel: 'Default Project'
           }
         }
       ];
-    }
-
-    function addToCart() {
-      $modalInstance.close();
-      if (vm.selections.projectDefault) {
-        CartService.defaultProject(vm.selections.projectId);
-      }
-      CartService.add(vm.selections.projectId, product);
     }
   }
 })();

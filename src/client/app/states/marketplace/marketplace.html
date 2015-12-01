@@ -12,7 +12,7 @@
   </div>
   <div class="marketplace__aside">
     <div>
-      <selected-products project-id="vm.projectId"></selected-products>
+      <selected-products></selected-products>
     </div>
     <button type="button" class="btn-rounded btn-rounded--short btn-rounded--capitalize marketplace__wizard"
             ng-click="vm.openWizard()">
@@ -21,4 +21,4 @@
   </div>
 </content-header>
 <catalog-category ng-repeat="category in vm.catalog" category="category" view-mode="vm.viewMode"
-                  required-tags="vm.tags" project-id="vm.projectId"></catalog-category>
+                  required-tags="vm.tags"></catalog-category>

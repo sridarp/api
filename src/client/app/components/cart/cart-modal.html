@@ -18,18 +18,18 @@
     </ul>
   </div>
   <tabset ng-if="!vm.isEmpty()">
-    <tab ng-repeat="item in vm.items track by item.project.id" active="tabActive"
-         select="vm.tabSelected(item.project.id)">
+    <tab ng-repeat="project in vm.projects track by project.projectDetails.id" active="tabActive"
+         select="vm.tabSelected(project.projectDetails)">
       <tab-heading>
-        {{ ::item.project.name}} ({{ item.itemCount }})<a ng-click="vm.remove(item.project)" href=''> <i class="fa fa-remove"></i></a>
+        {{ ::project.projectDetails.name}} ({{ project.productCount }})<a ng-click="vm.remove(project.projectDetails)" href=''> <i class="fa fa-remove"></i></a>
       </tab-heading>
 
 
-      <alert ng-if="::0 >= item.project.budgetRemainder()" type="danger">
+      <alert ng-if="::0 >= project.projectDetails.budgetRemainder()" type="danger">
         <strong>Budget Exceeded</strong> &mdash; The project budget has been exceeded!
       </alert>
 
-      <alert ng-if="::item.project.monthly_spend && item.project.scheduleRemaining() > item.project.monthsRemaining()"
+      <alert ng-if="::project.projectDetails.monthly_spend && project.projectDetails.scheduleRemaining() > project.projectDetails.monthsRemaining()"
              type="danger">
         <strong>Budget Overrun</strong>
         &mdash; The monthly spend is projected to exceed the budget based on the number of months remaining.
@@ -37,35 +37,31 @@
 
       <div class="details-table__row">
         <div class="details-table__label">Total Budget</div>
-        <div class="details-table__detail">{{ ::item.project.budget | currency }}</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.budget | currency }}</div>
       </div>
       <div class="details-table__row">
         <div class="details-table__label">Budget Spent</div>
-        <div class="details-table__detail">{{ ::item.project.spent | currency }}</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.spent | currency }}</div>
       </div>
       <div class="details-table__row">
         <div class="details-table__label">Available</div>
         <div class="details-table__detail">
-          <progressbar animate="false" value="::item.project.budgetRemainder()"
-                       type="{{ ::item.project.budgetUtilizationStatus() }}"
-                       title="{{ ::item.project.spent | currency }} of {{ ::item.project.budget | currency }} spent"
+          <progressbar animate="false" value="::project.projectDetails.budgetRemainder()"
+                       type="{{ ::project.projectDetails.budgetUtilizationStatus() }}"
+                       title="{{ ::project.projectDetails.spent | currency }} of {{ ::project.projectDetails.budget | currency }} spent"
                        class="details-table__progressbar">
-            <span class="project-details__budget-util">{{ item.project.budgetRemainder()  }}%</span>
+            <span class="project-details__budget-util">{{ project.projectDetails.budgetRemainder()  }}%</span>
           </progressbar>
         </div>
       </div>
       <div class="details-table__row">
         <div class="details-table__label">Projected Monthly Spend</div>
-        <div class="details-table__detail">{{ item.project.monthly_spend + item.total | currency }}</div>
+        <div class="details-table__detail">{{ project.projectDetails.monthly_spend + project.total | currency }}</div>
       </div>
       <div class="details-table__row">
         <div class="details-table__label">Projection</div>
-        <div class="details-table__detail">{{ ::item.project.monthsRemaining() }} months of remaining funds</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.monthsRemaining() }} months of remaining funds</div>
       </div>
-
-      <alert ng-repeat="alert in ::item.project.alerts" type="{{ ::Alert.statusToType(alert.status) }}">
-        <strong>[{{ ::alert.category | uppercase }}]</strong> {{ ::alert.message }}
-      </alert>
 
       <hr/>
 
@@ -79,7 +75,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="line in item.products track by line.product.cartId">
+        <tr ng-repeat="line in project.products track by line.product.cartId">
           <td class="tables__cell">
             <product-description product="line.product"
                                  link-to="products.details({productId: {{line.product.id}}})"></product-description>
@@ -89,12 +85,12 @@
             <computed-monthly-price pricing="line.product"></computed-monthly-price>
           </td>
           <td class="tables__cell tables__cell--actions">
-            <a class="tables__action" href="#" title="Remove" ng-click="vm.remove(item.project, line)">
+            <a class="tables__action" href="#" title="Remove" ng-click="vm.remove(project.projectDetails, line)">
               <img src="/images/ic_deletequestion.png" alt="Remove"/>
             </a>
 
             <a class="tables__action" href="#" title="Configure"
-               ng-click="vm.configure(item.project, line)">
+               ng-click="vm.configure(project.projectDetails, line)">
               <img src="/images/ic_config.png" alt="Configure"/>
             </a>
           </td>
@@ -104,8 +100,8 @@
         <tr>
           <td colspan="3" class="cart-table__footer cart-table__footer--total text-right">
             Total for
-            <a ui-sref="projects.details({projectId : item.project.id})">{{ ::item.project.name }}</a>
-            : &nbsp;{{ item.total | currency }}
+            <a ui-sref="projects.details({projectId : project.projectDetails.id})">{{ ::project.projectDetails.name }}</a>
+            : &nbsp;{{ project.total | currency }}
           </td>
         </tr>
         </tfoot>
