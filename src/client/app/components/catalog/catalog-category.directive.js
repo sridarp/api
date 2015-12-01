@@ -12,8 +12,7 @@
         category: '=',
         viewMode: '=?',
         collapsed: '=?',
-        comparable: '=?',
-        projectId: '=?'
+        comparable: '=?'
       },
       link: link,
       templateUrl: 'app/components/catalog/catalog-category.html',
@@ -29,7 +28,7 @@
     }
 
     /** @ngInject */
-    function CatalogCategoryController(VIEW_MODES, CartProjectHelper, CartService) {
+    function CatalogCategoryController(VIEW_MODES, ProjectHelper, CartService, SelectedProjectHelper) {
       var vm = this;
 
       vm.activate = activate;
@@ -43,11 +42,10 @@
       }
 
       function addToCart(product) {
-        vm.addToProject = vm.projectId ? vm.projectId : CartService.defaultProject();
-        if (vm.addToProject) {
-          CartService.add(vm.addToProject, product);
+        if (SelectedProjectHelper.defaultProject) {
+          CartService.add(SelectedProjectHelper.selectedProject, product);
         } else {
-          CartProjectHelper.showModal(vm.projectId, product);
+          ProjectHelper.showModal(product);
         }
       }
     }

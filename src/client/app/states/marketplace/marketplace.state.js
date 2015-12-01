@@ -56,7 +56,6 @@
     vm.title = 'Marketplace';
     vm.tags = [];
     vm.viewMode = VIEW_MODES.list;
-    vm.projectId = null || $previousState.get().params.projectId;
 
     vm.activate = activate;
     vm.updateCatalog = updateCatalog;

@@ -26,17 +26,23 @@
     }
 
     /** @ngInject */
-    function ProjectServicesController() {
+    function ProjectServicesController($state, SelectedProjectHelper) {
       var vm = this;
 
       vm.activate = activate;
       vm.readOnly = readOnlyCheck;
+      vm.addService = addService;
 
       function activate() {
       }
 
       function readOnlyCheck() {
         return null === vm.project.archived;
+      }
+
+      function addService() {
+        SelectedProjectHelper.selectProject(vm.project, true);
+        $state.go('marketplace');
       }
     }
   }
