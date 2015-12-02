@@ -43,7 +43,7 @@
 
     vm.selections = {
       projectId: null,
-      projectDefault: null
+      projectDefault: false
     };
     vm.addToCart = addToCart;
 

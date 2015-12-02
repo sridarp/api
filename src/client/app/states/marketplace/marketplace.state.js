@@ -50,7 +50,7 @@
 
   /** @ngInject */
   function StateController(logger, $q, VIEW_MODES, CatalogService, Tag,
-                           Compare, TAG_QUERY_LIMIT, $stateParams, WizardService, $previousState) {
+                           Compare, TAG_QUERY_LIMIT, $stateParams, WizardService) {
     var vm = this;
 
     vm.title = 'Marketplace';
