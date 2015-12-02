@@ -7,74 +7,70 @@
   /** @ngInject */
   function CartServiceFactory(Toasts, $modal, lodash, SelectedProjectHelper) {
     var service = {
-      projects: {},
       itemCountTotal: 0,
+      getProjects: getProjects,
       add: add,
       remove: remove,
+      removeProject: removeProject,
       clear: clear,
       isEmpty: isEmpty,
       showModal: showModal
     };
 
+    var projects = {};
+
     return service;
+
+    function getProjects() {
+      return projects;
+    }
 
     function add(project, product) {
       var projectId = project.id;
-      if (angular.isUndefined(service.projects[projectId])) {
-        service.projects[projectId] = {
-          projectDetails: SelectedProjectHelper.selectedProject,
-          products: {},
-          productCount: 0
+      if (lodash.isUndefined(projects[projectId])) {
+        projects[projectId] = {
+          projectDetails: project,
+          products: []
         };
       }
-
-      service.itemCountTotal += 1;
-
-      var cartId = lodash.size(service.projects[projectId].products) + 1;
-      service.projects[projectId].products[cartId] = {
+      projects[projectId].products.push({
         product: lodash.cloneDeep(product),
-        price: 0,
         service: {
-          name: ''
+          name: null
         }
-      };
-      service.projects[projectId].productCount = lodash.size(service.projects[projectId].products);
-      totalUpProject(SelectedProjectHelper.selectedProject);
-      service.projects[projectId].products[cartId].product.cartId = cartId;
-      Toasts.toast(product.name + ' has been add to your cart under ' + SelectedProjectHelper.selectedProject.name);
+      });
+      service.itemCountTotal += 1;
+      calculateProjectCost();
+      Toasts.toast(product.name + ' has been add to your cart under ' + project.name);
     }
 
-    function remove(project, productObj) {
-      var projectId = project.id;
-      if (!productObj) {
-        service.itemCountTotal -= lodash.size(service.projects[projectId].products);
-        delete service.projects[projectId];
-
-        return;
-      } else {
-        if (!inCart(project, productObj.product)) {
-          return;
-        }
+    function remove(index) {
+      var selectedProjectId = SelectedProjectHelper.selectedProject.id;
+      if (projects[selectedProjectId].products[index]) {
+        projects[selectedProjectId].products.splice(index, 1);
         service.itemCountTotal -= 1;
-
-        delete service.projects[projectId].products[productObj.product.cartId];
-        if (0 === Object.keys(service.projects[projectId].products).length) {
-          delete service.projects[projectId];
+        if (0 === projects[selectedProjectId].products.length) {
+          delete projects[selectedProjectId];
+        } else {
+          calculateProjectCost();
         }
       }
-      if (service.projects[projectId]) {
-        service.projects[projectId].productCount = lodash.size(service.projects[projectId].products) || 0;
+    }
+
+    function removeProject(projectId) {
+      if (projects[projectId]) {
+        service.itemCountTotal -= projects[projectId].products.length;
+        delete projects[projectId];
       }
-      totalUpProject(project);
     }
 
     function clear() {
-      service.projects = {};
+      projects = {};
       service.itemCountTotal = 0;
     }
 
     function isEmpty() {
-      return 0 === Object.keys(service.projects).length;
+      return 0 === Object.keys(projects).length;
     }
 
     function showModal() {
@@ -84,24 +80,18 @@
         controllerAs: 'vm',
         windowTemplateUrl: 'app/components/common/modal-window.html'
       };
-
       var modal = $modal.open(modalOptions);
     }
 
-    function inCart(project, product) {
-      return service.projects[project.id] && service.projects[project.id].products[product.cartId];
-    }
-
-    function totalUpProject(project) {
-      if (angular.isUndefined(service.projects[project.id])) {
+    function calculateProjectCost() {
+      var selectedProjectId = SelectedProjectHelper.selectedProject.id;
+      if (angular.isUndefined(projects[selectedProjectId])) {
         return;
       }
+      projects[selectedProjectId].total = lodash.reduce(projects[selectedProjectId].products, computeProductTotal, 0);
 
-      service.projects[project.id].total = 0;
-      angular.forEach(service.projects[project.id].products, computeProductTotal);
-      function computeProductTotal(line) {
-        line.price = (parseFloat(line.product.monthly_price)) + ((parseFloat(line.product.hourly_price)) * 750);
-        service.projects[project.id].total += line.price;
+      function computeProductTotal(total, line) {
+        return total + (parseFloat(line.product.monthly_price) + ((parseFloat(line.product.hourly_price)) * 750));
       }
     }
   }
@@ -113,16 +103,31 @@
     $scope.Object = Object;
 
     vm.remove = remove;
+    vm.removeProject = removeProject;
+    vm.removeAllProjects = removeAllProjects;
     vm.clear = clear;
     vm.checkout = checkout;
     vm.configure = configure;
     vm.isEmpty = isEmpty;
     vm.resetDefaultProject = resetDefaultProject;
     vm.tabSelected = tabSelected;
-    vm.projects = CartService.projects;
 
-    function remove(project, product) {
-      CartService.remove(project, product);
+    activate();
+
+    function activate() {
+      vm.projects = CartService.getProjects();
+    }
+
+    function remove(index) {
+      CartService.remove(index);
+    }
+
+    function removeProject(projectId) {
+      CartService.removeProject(projectId);
+    }
+
+    function removeAllProjects() {
+      CartService.clear();
     }
 
     function clear() {
@@ -133,10 +138,9 @@
       var projectOrder = {};
       projectOrder.products = [];
       var selectedProject = SelectedProjectHelper.selectedProject.id;
-      var projectObject = CartService.projects[selectedProject];
-      var allProductsConfigured = lodash.filter(projectObject.products, emptyName);
+      var projectObject = vm.projects[selectedProject];
 
-      if (lodash.isEmpty(allProductsConfigured)) {
+      if (lodash.every(projectObject.products, configuredProductCheck)) {
         if (projectObject.projectDetails.budget >= projectObject.total) {
           projectOrder.project_id = selectedProject;
           lodash.forEach(projectObject.products, buildOrderList);
@@ -157,10 +161,6 @@
         Toasts.error('Could not place order at this time.');
       }
 
-      function emptyName(product) {
-        return lodash.isEmpty(product.service.name);
-      }
-
       function buildOrderList(cartProduct) {
         var orderProduct = {};
         orderProduct.product_id = cartProduct.product.product_type_id;
@@ -170,11 +170,11 @@
       }
     }
 
-    function configure(project, productRow) {
-      ProductHelper.showModal(project, productRow).then(handleResult);
+    function configure(index, productRow) {
+      ProductHelper.showModal(productRow).then(handleResult);
 
       function handleResult(configuration) {
-        assembleOrder(configuration, project, productRow);
+        configureProduct(configuration, index);
       }
     }
 
@@ -193,8 +193,13 @@
     }
 
     // Private
-    function assembleOrder(configuration, project, productRow) {
-      CartService.projects[project.id].products[productRow.product.cartId].service.name = configuration.name;
+    function configuredProductCheck(product) {
+      return product.service.name !== null;
+    }
+
+    function configureProduct(configuration, index) {
+      var selectedProjectId = SelectedProjectHelper.selectedProject.id;
+      vm.projects[selectedProjectId].products[index].service.name = configuration.name;
     }
   }
 })();

@@ -12,14 +12,13 @@
 
     return service;
 
-    function showModal(project, productRow) {
+    function showModal(productRow) {
       var modalOptions = {
         templateUrl: 'app/components/cart/product-helper.html',
         controller: ProductHelperController,
         controllerAs: 'vm',
         resolve: {
           productDetails: resolveProductDetails,
-          project: resolveProject,
           productRow: resolveProductRow
         },
         windowTemplateUrl: 'app/components/common/modal-window.html'
@@ -32,10 +31,6 @@
         return Product.get({id: productRow.product.id, 'includes[]': ['product_type', 'provider']}).$promise;
       }
 
-      function resolveProject() {
-        return project;
-      }
-
       function resolveProductRow() {
         return productRow;
       }
@@ -43,14 +38,13 @@
   }
 
   /** @ngInject */
-  function ProductHelperController(project, productRow, productDetails) {
+  function ProductHelperController(productRow, productDetails) {
     var vm = this;
 
     var product = productRow.product;
     vm.selections = {
       name: productRow.service.name ? productRow.service.name : ''
     };
-    vm.project = project;
     vm.productDetails = productDetails;
     vm.subHeading = [productDetails.name, productDetails.product_type.name].join(' :: ');
 

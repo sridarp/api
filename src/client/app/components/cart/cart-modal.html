@@ -15,25 +15,17 @@
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="single-button">
       <li role="menuitem"><a href="#" ng-click="vm.resetDefaultProject()">Reset Default Project</a></li>
+      <li role="menuitem"><a href="#" ng-click="vm.removeAllProjects()">Remove All Projects</a></li>
+
     </ul>
   </div>
   <tabset ng-if="!vm.isEmpty()">
     <tab ng-repeat="project in vm.projects track by project.projectDetails.id" active="tabActive"
          select="vm.tabSelected(project.projectDetails)">
       <tab-heading>
-        {{ ::project.projectDetails.name}} ({{ project.productCount }})<a ng-click="vm.remove(project.projectDetails)" href=''> <i class="fa fa-remove"></i></a>
+        {{ ::project.projectDetails.name}} ({{ project.products.length }})
+        <a ng-click="vm.removeProject(project.projectDetails.id)" href='#'> <i class="fa fa-remove"></i></a>
       </tab-heading>
-
-
-      <alert ng-if="::0 >= project.projectDetails.budgetRemainder()" type="danger">
-        <strong>Budget Exceeded</strong> &mdash; The project budget has been exceeded!
-      </alert>
-
-      <alert ng-if="::project.projectDetails.monthly_spend && project.projectDetails.scheduleRemaining() > project.projectDetails.monthsRemaining()"
-             type="danger">
-        <strong>Budget Overrun</strong>
-        &mdash; The monthly spend is projected to exceed the budget based on the number of months remaining.
-      </alert>
 
       <div class="details-table__row">
         <div class="details-table__label">Total Budget</div>
@@ -55,12 +47,17 @@
         </div>
       </div>
       <div class="details-table__row">
+        <div class="details-table__label">Present Monthly Spend</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.monthly_spend | currency}}</div>
+      </div>
+      <div class="details-table__row">
         <div class="details-table__label">Projected Monthly Spend</div>
-        <div class="details-table__detail">{{ project.projectDetails.monthly_spend + project.total | currency }}</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.monthly_spend + project.total | currency }}</div>
       </div>
       <div class="details-table__row">
         <div class="details-table__label">Projection</div>
-        <div class="details-table__detail">{{ ::project.projectDetails.monthsRemaining() }} months of remaining funds</div>
+        <div class="details-table__detail">{{ ::project.projectDetails.monthsRemaining() }} months of remaining funds
+        </div>
       </div>
 
       <hr/>
@@ -70,12 +67,12 @@
         <tr>
           <th class="tables__heading cart-table--product">Product</th>
           <th class="tables__heading cart-table--setup_price">Setup Price</th>
-          <th class="tables__heading cart-table--price">Monthly Price</th>
+          <th class="tables__heading cart-table--price">Monthly Cost</th>
           <th class="tables__heading tables__heading--actions">Action</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="line in project.products track by line.product.cartId">
+        <tr ng-repeat="line in project.products track by $index">
           <td class="tables__cell">
             <product-description product="line.product"
                                  link-to="products.details({productId: {{line.product.id}}})"></product-description>
@@ -85,12 +82,11 @@
             <computed-monthly-price pricing="line.product"></computed-monthly-price>
           </td>
           <td class="tables__cell tables__cell--actions">
-            <a class="tables__action" href="#" title="Remove" ng-click="vm.remove(project.projectDetails, line)">
+            <a class="tables__action" href="#" title="Remove" ng-click="vm.remove($index)">
               <img src="/images/ic_deletequestion.png" alt="Remove"/>
             </a>
-
             <a class="tables__action" href="#" title="Configure"
-               ng-click="vm.configure(project.projectDetails, line)">
+               ng-click="vm.configure($index, line)">
               <img src="/images/ic_config.png" alt="Configure"/>
             </a>
           </td>
@@ -100,7 +96,8 @@
         <tr>
           <td colspan="3" class="cart-table__footer cart-table__footer--total text-right">
             Total for
-            <a ui-sref="projects.details({projectId : project.projectDetails.id})">{{ ::project.projectDetails.name }}</a>
+            <a ui-sref="projects.details({projectId : project.projectDetails.id})">{{ ::project.projectDetails.name
+              }}</a>
             : &nbsp;{{ project.total | currency }}
           </td>
         </tr>
@@ -114,9 +111,7 @@
 
 <div class="modals__footer">
 
-  <button type="button" class="btn-rounded modals__button--cancel" ng-click="$dismiss()">
-    Cancel
-  </button>
+  <button type="button" class="btn-rounded modals__button--cancel" ng-click="$dismiss()">Cancel</button>
   <button type="button" class="btn-rounded cart-modal__checkout"
           ng-click="vm.checkout()"
           ng-disabled="vm.isEmpty()">
