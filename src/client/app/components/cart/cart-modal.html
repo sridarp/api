@@ -20,7 +20,7 @@
     </ul>
   </div>
   <tabset ng-if="!vm.isEmpty()">
-    <tab ng-repeat="project in vm.projects track by project.projectDetails.id" active="tabActive"
+    <tab ng-repeat="project in vm.projects track by project.projectDetails.id"
          select="vm.tabSelected(project.projectDetails)">
       <tab-heading>
         {{ ::project.projectDetails.name}} ({{ project.products.length }})
@@ -65,21 +65,30 @@
       <table st-table="orders" class="tables">
         <thead>
         <tr>
-          <th class="tables__heading cart-table--product">Product</th>
-          <th class="tables__heading cart-table--setup_price">Setup Price</th>
-          <th class="tables__heading cart-table--price">Monthly Cost</th>
+          <th class="tables__heading cart-table__product">Product</th>
+          <th class="tables__heading cart-table__setup_price">Setup Price</th>
+          <th class="tables__heading cart-table__price">Monthly Cost</th>
+          <th class="tables__heading tables__heading--centered cart-table__configured">Configured</th>
           <th class="tables__heading tables__heading--actions">Action</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="line in project.products track by $index">
           <td class="tables__cell">
-            <product-description product="line.product"
-                                 link-to="products.details({productId: {{line.product.id}}})"></product-description>
+            <div ng-if="::!line.product.img"
+                 class="product-description__image product-description__image--missing"></div>
+            <img ng-if="::line.product.img" class="product-description__image"
+                 ng-src="images/assets/{{ ::line.product.img }}"/>
+            <a ui-sref="products.details({productId: line.product.id})">{{ ::line.product.name }}</a>
           </td>
           <td class="tables__cell">{{ ::line.product.setup_price | currency}}</td>
           <td class="tables__cell">
             <computed-monthly-price pricing="line.product"></computed-monthly-price>
+          </td>
+          <td class="tables__cell tables__cell--centered">
+
+            <img ng-if="line.service.name" src="/images/ic_required.png" alt="Project Configured"/>
+
           </td>
           <td class="tables__cell tables__cell--actions">
             <a class="tables__action" href="#" title="Remove" ng-click="vm.remove($index)">
@@ -96,8 +105,8 @@
         <tr>
           <td colspan="3" class="cart-table__footer cart-table__footer--total text-right">
             Total for
-            <a ui-sref="projects.details({projectId : project.projectDetails.id})">{{ ::project.projectDetails.name
-              }}</a>
+            <a ui-sref="projects.details({projectId : project.projectDetails.id})">{{
+              ::project.projectDetails.name}}</a>
             : &nbsp;{{ project.total | currency }}
           </td>
         </tr>

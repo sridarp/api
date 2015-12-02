@@ -77,7 +77,7 @@
 
       var modalOptions = {
         templateUrl: 'app/components/confirmation/confirmation.html',
-        windowTemplateUrl: 'app/components/common/modal-window.html',
+        windowTemplateUrl: 'app/components/confirmation/confirmation-window.html',
         scope: $scope
       };
 
