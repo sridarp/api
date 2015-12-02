@@ -77,6 +77,7 @@
       var modalOptions = {
         templateUrl: 'app/components/cart/cart-modal.html',
         controller: CartModalController,
+        size: 'lg',
         controllerAs: 'vm',
         windowTemplateUrl: 'app/components/common/modal-window.html'
       };
@@ -135,15 +136,17 @@
     }
 
     function checkout() {
-      var projectOrder = {};
-      projectOrder.products = [];
+      var projectOrder = {
+        products: []
+      };
       var selectedProject = SelectedProjectHelper.selectedProject.id;
       var projectObject = vm.projects[selectedProject];
 
       if (lodash.every(projectObject.products, configuredProductCheck)) {
         if (projectObject.projectDetails.budget >= projectObject.total) {
           projectOrder.project_id = selectedProject;
-          lodash.forEach(projectObject.products, buildOrderList);
+          projectOrder.products = lodash.map(projectObject.products, buildOrderItem);
+
           Order.save(projectOrder, saveSuccess, saveError);
         } else {
           Toasts.error('Cart total exceeds project budget, cannot process order.');
@@ -161,12 +164,12 @@
         Toasts.error('Could not place order at this time.');
       }
 
-      function buildOrderList(cartProduct) {
-        var orderProduct = {};
-        orderProduct.product_id = cartProduct.product.product_type_id;
-        orderProduct.answers = cartProduct.product.answers;
-        orderProduct.service = cartProduct.service;
-        projectOrder.products.push(orderProduct);
+      function buildOrderItem(item) {
+        return {
+          product_id: item.product.product_type_id,
+          answers: item.product.answers,
+          service: item.service
+        };
       }
     }
 
