@@ -99,9 +99,8 @@
 
   /** @ngInject */
   function CartModalController(CartService, ProductHelper, $modalInstance,
-                               Toasts, Order, lodash, SelectedProjectHelper, $scope) {
+                               Toasts, Order, lodash, SelectedProjectHelper) {
     var vm = this;
-    $scope.Object = Object;
 
     vm.remove = remove;
     vm.removeProject = removeProject;
