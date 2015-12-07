@@ -83,20 +83,21 @@ namespace :sample do
       data['uuid'] = SecureRandom.uuid
       puts "  #{data['name']}"
       [data.delete('_assoc'), Service.create(data).tap do |service|
-          service.alerts.create(alerts) unless alerts.nil?
-          service.service_outputs.create(service_outputs) unless service_outputs.nil?
-          staff = users.assoc(order.delete('staff')).last
-          product = products.assoc(order.delete('product')).last
-          project = projects.assoc(order.delete('project')).last
-          order.merge! project: project,
-            product: product,
-            staff: staff,
-            setup_price: product.setup_price,
-            hourly_price: product.hourly_price,
-            monthly_price: product.monthly_price
-          service.create_order order
-        end]
+        product = products.assoc(order.delete('product')).last
+        service.alerts.create(alerts) unless alerts.nil?
+        service.service_outputs.create(service_outputs) unless service_outputs.nil?
+        service.products.create(product) unless alerts.nil?
+        staff = users.assoc(order.delete('staff')).last
+        project = projects.assoc(order.delete('project')).last
+        order.merge! project: project,
+                     staff: staff,
+                     setup_price: product.setup_price,
+                     hourly_price: product.hourly_price,
+                     monthly_price: product.monthly_price
+        service.create_order order
+      end]
     end
+
 
     sample_data 'wizard_questions' do |data|
       answers = data.delete 'answers'
