@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151120153828) do
+ActiveRecord::Schema.define(version: 20151204174530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -213,8 +213,6 @@ ActiveRecord::Schema.define(version: 20151120153828) do
     t.datetime "updated_at",                                         null: false
     t.integer  "staff_id",                                           null: false
     t.integer  "project_id",                                         null: false
-    t.integer  "product_id",                                         null: false
-    t.integer  "service_id",                                         null: false
     t.decimal  "setup_price",   precision: 10, scale: 4
     t.decimal  "hourly_price",  precision: 10, scale: 4
     t.decimal  "monthly_price", precision: 10, scale: 4
@@ -222,9 +220,7 @@ ActiveRecord::Schema.define(version: 20151120153828) do
     t.string   "status_msg"
   end
 
-  add_index "orders", ["product_id"], name: "index_orders_on_product_id", using: :btree
   add_index "orders", ["project_id"], name: "index_orders_on_project_id", using: :btree
-  add_index "orders", ["service_id"], name: "index_orders_on_service_id", using: :btree
   add_index "orders", ["staff_id"], name: "index_orders_on_staff_id", using: :btree
 
   create_table "organizations", force: :cascade do |t|
@@ -372,6 +368,8 @@ ActiveRecord::Schema.define(version: 20151120153828) do
     t.integer  "health",     default: 0, null: false
     t.integer  "status"
     t.string   "status_msg"
+    t.integer  "product_id"
+    t.integer  "order_id"
   end
 
   add_index "services", ["type"], name: "index_services_on_type", using: :btree
@@ -467,9 +465,7 @@ ActiveRecord::Schema.define(version: 20151120153828) do
   add_foreign_key "groups_staff", "staff", on_delete: :cascade
   add_foreign_key "memberships", "groups", on_delete: :cascade
   add_foreign_key "memberships", "projects", on_delete: :cascade
-  add_foreign_key "orders", "products", on_delete: :cascade
   add_foreign_key "orders", "projects", on_delete: :cascade
-  add_foreign_key "orders", "services", on_delete: :cascade
   add_foreign_key "orders", "staff", on_delete: :cascade
   add_foreign_key "wizard_answers", "wizard_questions", on_delete: :cascade
 end

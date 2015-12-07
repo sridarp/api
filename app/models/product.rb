@@ -33,7 +33,7 @@ class Product < ActiveRecord::Base
 
   belongs_to :provider
   belongs_to :product_type
-  has_many :orders
+  has_many :services
 
   accepts_nested_attributes_for :answers
 

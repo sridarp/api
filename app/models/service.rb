@@ -26,9 +26,9 @@ class Service < ActiveRecord::Base
   has_many :service_outputs
   has_many :logs, as: :loggable, dependent: :destroy
 
-  has_one :order
+  belongs_to :order
   has_one :project, through: :order
-  has_one :product, through: :order
+  belongs_to :product
   has_one :product_type, through: :product
   has_one :provider, through: :product
 

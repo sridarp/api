@@ -40,13 +40,8 @@ class OrdersController < ApplicationController
   error code: 422, desc: ParameterValidation::Messages.missing
 
   def create
-    cart ||= []
-    order_params[:products].each do |order|
-      order[:project_id] = params[:project_id]
-      cart.push(CreateServiceOrder.perform(current_user, order).order)
-    end
-
-    respond_with cart, location: orders_url
+    use_case = CreateServiceOrder.perform(current_user, order_params)
+    respond_with use_case.order, location: orders_url
   rescue UseCase::Error => e
     fail_with error: e.message, type: e.class.to_s.split('::').last
   end

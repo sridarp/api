@@ -7,8 +7,6 @@
 #  updated_at    :datetime         not null
 #  staff_id      :integer          not null
 #  project_id    :integer          not null
-#  product_id    :integer          not null
-#  service_id    :integer          not null
 #  setup_price   :decimal(10, 4)
 #  hourly_price  :decimal(10, 4)
 #  monthly_price :decimal(10, 4)
@@ -17,17 +15,15 @@
 #
 # Indexes
 #
-#  index_orders_on_product_id  (product_id)
 #  index_orders_on_project_id  (project_id)
-#  index_orders_on_service_id  (service_id)
 #  index_orders_on_staff_id    (staff_id)
 #
 
 class Order < ActiveRecord::Base
   belongs_to :staff
-  belongs_to :product
   belongs_to :project
-  belongs_to :service
+  has_many :services
+  has_many :products, through: :services
 
   # Columns
   enum status: { pending: 0, working: 1, completed: 2, failed: 3 }
