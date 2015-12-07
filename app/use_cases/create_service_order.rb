@@ -45,19 +45,26 @@ class CreateServiceOrder
       fail UnapprovedProject, "Project '#{project.name}' has not been approved."
     end
 
+    validate_name
+
+    unless total_cost + project.monthly_spend <= project.monthly_budget
+      fail BudgetError, 'Adding this service will exceed the Project\'s monthly budget.'
+    end
+  end
+
+  def validate_name
     params[:products].each do |product|
       unless product[:service]['name'].present?
         fail UnnamedService, 'A name for the service was not given.'
       end
     end
+  end
 
+  def total_cost
     products.each do |product|
       @total_cost += product[:monthly_price]
     end
-
-    unless @total_cost + project.monthly_spend <= project.monthly_budget
-      fail BudgetError, 'Adding this service will exceed the Project\'s monthly budget.'
-    end
+    @total_cost
   end
 
   def build_service(service, product_id)
@@ -65,7 +72,7 @@ class CreateServiceOrder
     service.status = :pending
     service.status_msg = 'Provisioning service...'
     service.product_id = product_id
-    return service
+    service
   end
 
   def build_order
