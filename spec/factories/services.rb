@@ -26,6 +26,7 @@ FactoryGirl.define do
       "Service #{n}"
     end
 
+    product
     uuid SecureRandom.uuid
     health :ok
     status :pending
