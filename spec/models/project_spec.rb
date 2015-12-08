@@ -186,4 +186,25 @@ describe 'Project.monthly_budget' do
       @project.reload
     end .to raise_error CreateServiceOrder::BudgetError
   end
+
+  it 'rejects new orders with multiple identical services that exceed the monthly budget' do
+    @product_one = create :product, monthly_price: 20
+    @product_two = create :product, monthly_price: 75
+
+    expect do
+      CreateServiceOrder.perform @user,
+        project_id: @project.id,
+        products: [{
+          product_id: @product_one.id,
+          service: { 'name' => 'Service 1' }
+        }, {
+          product_id: @product_two.id,
+          service: { 'name' => 'Service 2' }
+        }, {
+          product_id: @product_one.id,
+          service: { 'name' => 'Service 3' }
+        }]
+      @project.reload
+    end .to raise_error CreateServiceOrder::BudgetError
+  end
 end

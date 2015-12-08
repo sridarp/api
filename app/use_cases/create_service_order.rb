@@ -60,7 +60,7 @@ class CreateServiceOrder
   end
 
   def total_cost
-    @total_cost ||= products.map { |p| p[:monthly_price] }.inject(&:+)
+    @total_cost ||= services.map { |s| Product.find(s.product_id)[:monthly_price] }.inject(&:+)
   end
 
   def build_service(service, product_id)
@@ -76,10 +76,10 @@ class CreateServiceOrder
     hourly_price = 0
     monthly_price = 0
 
-    products.each do |product|
-      setup_price += product.setup_price
-      hourly_price += product.hourly_price
-      monthly_price += product.monthly_price
+    services.each do |service|
+      setup_price += Product.find(service.product_id).setup_price
+      hourly_price += Product.find(service.product_id).hourly_price
+      monthly_price += Product.find(service.product_id).monthly_price
     end
 
     order_params = {
