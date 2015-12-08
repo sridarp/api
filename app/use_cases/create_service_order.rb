@@ -25,7 +25,6 @@ class CreateServiceOrder
   def initialize(current_user, order_params)
     @user = current_user
     @params = order_params
-    @total_cost = 0
   end
 
   def perform
@@ -61,10 +60,7 @@ class CreateServiceOrder
   end
 
   def total_cost
-    products.each do |product|
-      @total_cost += product[:monthly_price]
-    end
-    @total_cost
+    @total_cost ||= products.map { |p| p[:monthly_price] }.inject(&:+)
   end
 
   def build_service(service, product_id)
@@ -76,22 +72,22 @@ class CreateServiceOrder
   end
 
   def build_order
-    @setup_price = 0
-    @hourly_price = 0
-    @monthly_price = 0
+    setup_price = 0
+    hourly_price = 0
+    monthly_price = 0
 
     products.each do |product|
-      @setup_price += product.setup_price
-      @hourly_price += product.hourly_price
-      @monthly_price += product.monthly_price
+      setup_price += product.setup_price
+      hourly_price += product.hourly_price
+      monthly_price += product.monthly_price
     end
 
     order_params = {
       staff: user,
       project_id: params[:project_id],
-      setup_price: @setup_price,
-      hourly_price: @hourly_price,
-      monthly_price: @monthly_price,
+      setup_price: setup_price,
+      hourly_price: hourly_price,
+      monthly_price: monthly_price,
       services: services
     }
 
@@ -123,11 +119,7 @@ class CreateServiceOrder
   end
 
   def products
-    product_ids = []
-    params[:products].each do |product|
-      product_ids.push(product[:product_id])
-    end
-    @products ||= Product.find(product_ids)
+    @products ||= Product.find params[:products].map { |p| p[:product_id] }
   rescue ActiveRecord::RecordNotFound
     raise MissingProduct, 'The associated product cannot be located.'
   end
