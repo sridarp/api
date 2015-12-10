@@ -24,7 +24,9 @@ class OrdersController < ApplicationController
 
   def show
     authorize order
-    respond_with_params order
+    if order.length == 1
+      respond_with_params order[0]
+    end
   end
 
   api :POST, '/orders', 'Make a new service order'
