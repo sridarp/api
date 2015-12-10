@@ -161,9 +161,9 @@
       }
 
       function saveError(data) {
-        if(data.data.error){
+        if (data.data.error) {
           Toasts.error(data.data.error);
-        }else{
+        } else {
           Toasts.error('Could not place order at this time.');
         }
       }
