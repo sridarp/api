@@ -155,17 +155,22 @@
       }
 
       function saveSuccess() {
-        CartService.remove(projectObject.project);
+        removeProject(selectedProject);
+        $modalInstance.close();
         Toasts.toast('Order accepted.');
       }
 
-      function saveError() {
-        Toasts.error('Could not place order at this time.');
+      function saveError(data) {
+        if(data.data.error){
+          Toasts.error(data.data.error);
+        }else{
+          Toasts.error('Could not place order at this time.');
+        }
       }
 
       function buildOrderItem(item) {
         return {
-          product_id: item.product.product_type_id,
+          product_id: item.product.id,
           answers: item.product.answers,
           service: item.service
         };
