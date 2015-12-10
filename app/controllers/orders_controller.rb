@@ -1,7 +1,7 @@
 class OrdersController < ApplicationController
   include Wisper::Publisher
 
-  ORDER_INCLUDES = %w(staff product project service answers)
+  ORDER_INCLUDES = %w(staff products project services answers)
 
   after_action :verify_authorized, except: [:create]
 
@@ -65,6 +65,6 @@ class OrdersController < ApplicationController
   end
 
   def order
-    @_order ||= Order.find params[:id]
+    @_order ||= query_with Order.where(id: params[:id]), :includes
   end
 end
