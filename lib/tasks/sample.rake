@@ -86,7 +86,7 @@ namespace :sample do
         product = products.assoc(order.delete('product')).last
         service.alerts.create(alerts) unless alerts.nil?
         service.service_outputs.create(service_outputs) unless service_outputs.nil?
-        service.products.create(product) unless alerts.nil?
+        service.product_id = product.id
         staff = users.assoc(order.delete('staff')).last
         project = projects.assoc(order.delete('project')).last
         order.merge! project: project,
@@ -95,6 +95,7 @@ namespace :sample do
                      hourly_price: product.hourly_price,
                      monthly_price: product.monthly_price
         service.create_order order
+        service.save
       end]
     end
 
