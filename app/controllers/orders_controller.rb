@@ -24,9 +24,7 @@ class OrdersController < ApplicationController
 
   def show
     authorize order
-    if order.length == 1
-      respond_with_params order[0]
-    end
+    respond_with_params order
   end
 
   api :POST, '/orders', 'Make a new service order'
@@ -67,6 +65,6 @@ class OrdersController < ApplicationController
   end
 
   def order
-    @_order ||= query_with Order.where(id: params[:id]), :includes
+    @_order ||= query_with Order.find(params[:id])
   end
 end
