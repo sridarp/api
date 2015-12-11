@@ -28,18 +28,17 @@
   function resolveOrder($stateParams, Order) {
     return Order.get({
       id: $stateParams.orderId,
-      'includes[]': ['product', 'project', 'service', 'staff']
+      'includes[]': ['products', 'project', 'services', 'staff']
     }).$promise;
   }
 
   /** @ngInject */
-  function StateController(order) {
+  function StateController(order, lodash) {
     var vm = this;
 
     vm.order = order;
     vm.staff = order.staff;
-    vm.product = order.product;
-    vm.service = order.service;
+    vm.products = order.products;
     vm.project = order.project;
 
     vm.activate = activate;
@@ -47,6 +46,11 @@
     activate();
 
     function activate() {
+      lodash.forEach(vm.order.services, mapProduct);
+
+      function mapProduct(service) {
+        service.product = lodash.find(order.products, {'id': service.product_id});
+      }
     }
   }
 })();

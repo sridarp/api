@@ -26,7 +26,7 @@
 
   /** @ngInject */
   function resolveOrders(Order) {
-    return Order.query({'includes[]': ['staff', 'project', 'product']}).$promise;
+    return Order.query({'includes[]': ['staff', 'project', 'services', 'products']}).$promise;
   }
 
   /** @ngInject */
@@ -55,7 +55,6 @@
 
         order.project = project.name;
         order.project_id = project.id;
-        order.product_name = order.product.name;
         order.total = order.total();
         order.staff = new Staff(staff).fullName();
         order.status = lodash.capitalize(order.status);
