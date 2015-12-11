@@ -1,113 +1,120 @@
 ---
-- _assoc: mobile_small_1
-  type: Null::Service
-  name: API Application Server
-  health: ok
-  status: running
-  order:
-    staff: admin
-    project: mobile
-    product: small_ec2
-  service_outputs:
-    - name: Public IP
-      value: 10.0.0.12
-      value_type: string
-    - name: Username
-      value: root
-      value_type: string
-    - name: Password
-      value: toor
-      value_type: string
-- _assoc: mobile_small_2
-  type: Null::Service
-  name: Job Queue
-  health: ok
-  status: running
-  order:
-    staff: admin
-    project: mobile
-    product: small_ec2
-  service_outputs:
-    - name: Public IP
-      value: 44.44.0.12
-      value_type: string
-    - name: Username
-      value: Admin
-      value_type: string
-    - name: Password
-      value: admin1234!@#$
-      value_type: string
-- _assoc: blog_small_1
-  type: Null::Service
-  name: Job Queue
-  health: ok
-  status: running
-  order:
-    staff: smith_mary
-    project: blog
-    product: small_ec2
-- _assoc: blog_medium_1
-  type: Null::Service
-  name: Application Web Server
-  health: ok
-  status: running
-  order:
-    staff: smith_mary
-    project: blog
-    product: medium_ec2
-- _assoc: cloud_large_1
-  type: Null::Service
-  name: File Processing Server (primary)
-  health: ok
-  status: running
-  order:
-    staff: admin
-    project: files
-    product: large_ec2
-  service_outputs:
-    - name: Public IP
-      value: 102.0.0.33
-      value_type: string
-    - name: Username
-      value: root
-      value_type: string
-    - name: Password
-      value: toor
-      value_type: string
-    - name: Private IP
-      value: 192.168.2.99
-      value_type: string
-    - name: Prority
-      value: 100
-      value_type: integer
-- _assoc: cloud_large_2
-  type: Null::Service
-  name: File Processing Server (failover)
-  health: ok
-  status: running
-  order:
-    staff: admin
-    project: files
-    product: large_ec2
-- _assoc: cloud_large_3
-  type: Null::Service
-  name: Job Queue Server
-  health: ok
-  status: running
-  order:
-    staff: admin
-    project: files
-    product: large_ec2
-  service_outputs:
-    - name: Public IP
-      value: 22.1.13.12
-      value_type: string
-    - name: Username
-      value: admin
-      value_type: string
-    - name: Email
-      value: admin@projectjellyfish.org
-      value_type: email
-    - name: Password
-      value: 1234!@#$
-      value_type: string
+- name: API Application Server
+  staff: admin
+  project: mobile
+  products:
+    - _assoc: mobile_small_1
+      product: small_ec2
+      type: Null::Service
+      name: API Application Server
+      health: ok
+      status: running
+      service_outputs:
+          - name: Public IP
+            value: 10.0.0.12
+            value_type: string
+          - name: Username
+            value: root
+            value_type: string
+          - name: Password
+            value: toor
+            value_type: string
+    - _assoc: mobile_small_2
+      product: small_ec2
+      type: Null::Service
+      name: Job Queue
+      health: ok
+      status: running
+      service_outputs:
+        - name: Public IP
+          value: 44.44.0.12
+          value_type: string
+        - name: Username
+          value: Admin
+          value_type: string
+        - name: Password
+          value: admin1234!@#$
+          value_type: string
+- name: Application Web Server
+  staff: smith_mary
+  project: blog
+  products:
+    - _assoc: blog_small_1
+      product: small_ec2
+      type: Null::Service
+      name: Job Queue
+      health: ok
+      status: running
+    - _assoc: blog_medium_1
+      product: medium_ec2
+      type: Null::Service
+      name: Application Web Server
+      health: ok
+      status: running
+- name: File Processing Server (primary)
+  staff: manager
+  project: files
+  products:
+    - _assoc: cloud_large_1
+      product: large_ec2
+      type: Null::Service
+      name: File Processing Server (primary)
+      health: ok
+      status: running
+      service_outputs:
+        - name: Public IP
+          value: 102.0.0.33
+          value_type: string
+        - name: Username
+          value: root
+          value_type: string
+        - name: Password
+          value: toor
+          value_type: string
+        - name: Private IP
+          value: 192.168.2.99
+          value_type: string
+        - name: Prority
+          value: 100
+          value_type: integer
+    - _assoc: cloud_large_2
+      product: large_ec2
+      type: Null::Service
+      name: File Processing Server (failover)
+      health: ok
+      status: running
+    - _assoc: cloud_large_3
+      product: large_ec2
+      type: Null::Service
+      name: Job Queue Server
+      health: ok
+      status: running
+      service_outputs:
+        - name: Public IP
+          value: 22.1.13.12
+          value_type: string
+        - name: Username
+          value: admin
+          value_type: string
+        - name: Email
+          value: admin@projectjellyfish.org
+          value_type: email
+        - name: Password
+          value: 1234!@#$
+          value_type: string
+- name: File Processing Server (secondary)
+  staff: jones_jane
+  project: files
+  products:
+    - _assoc: cloud_large_1
+      product: large_ec2
+      type: Null::Service
+      name: File Processing Server (primary)
+      health: ok
+      status: running
+    - _assoc: cloud_large_2
+      product: large_ec2
+      type: Null::Service
+      name: File Processing Server (failover)
+      health: ok
+      status: running
