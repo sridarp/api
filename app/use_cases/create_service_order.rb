@@ -29,6 +29,7 @@ class CreateServiceOrder
 
   def perform
     validate
+    build_services
     build_order
     authorize order, :create?
     save
@@ -71,23 +72,25 @@ class CreateServiceOrder
     service
   end
 
-  def build_order
-    setup_price = 0
-    hourly_price = 0
-    monthly_price = 0
+  def build_services
+    @setup_price = 0
+    @hourly_price = 0
+    @monthly_price = 0
 
     services.each do |service|
-      setup_price += Product.find(service.product_id).setup_price
-      hourly_price += Product.find(service.product_id).hourly_price
-      monthly_price += Product.find(service.product_id).monthly_price
+      @setup_price += Product.find(service.product_id).setup_price
+      @hourly_price += Product.find(service.product_id).hourly_price
+      @monthly_price += Product.find(service.product_id).monthly_price
     end
+  end
 
+  def build_order
     order_params = {
       staff: user,
       project_id: params[:project_id],
-      setup_price: setup_price,
-      hourly_price: hourly_price,
-      monthly_price: monthly_price,
+      setup_price: @setup_price,
+      hourly_price: @hourly_price,
+      monthly_price: @monthly_price,
       services: services
     }
 
