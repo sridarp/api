@@ -27,6 +27,7 @@
 
     function add(project, product) {
       var projectId = project.id;
+
       if (lodash.isUndefined(projects[projectId])) {
         projects[projectId] = {
           projectDetails: project,
@@ -42,6 +43,9 @@
       service.itemCountTotal += 1;
       calculateProjectCost();
       Toasts.toast(product.name + ' has been add to your cart under ' + project.name);
+      if (project.budget < projects[projectId].total) {
+        Toasts.error('You have exceeded the budget for ' + project.name)
+      }
     }
 
     function remove(index) {
