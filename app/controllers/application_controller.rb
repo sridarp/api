@@ -1,5 +1,8 @@
 # Default controller
 class ApplicationController < ActionController::Base
+  rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
+    render :text => exception, :status => 500
+  end
   respond_to :json
 
   include Pundit

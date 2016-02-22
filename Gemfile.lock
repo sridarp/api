@@ -139,6 +139,9 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    devise_ldap_authenticatable (0.8.5)
+      devise (>= 3.4.1)
+      net-ldap (>= 0.6.0, <= 0.11)
     diff-lcs (1.2.5)
     docile (1.1.5)
     domain_name (0.5.25)
@@ -229,6 +232,7 @@ GEM
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    net-ldap (0.11)
     netrc (0.10.3)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -407,6 +411,7 @@ DEPENDENCIES
   database_cleaner (~> 1.4.1)
   delayed_job_active_record
   devise
+  devise_ldap_authenticatable
   dotenv-rails
   factory_girl_rails (~> 4.0)
   foreman
@@ -445,4 +450,4 @@ DEPENDENCIES
   wisper
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

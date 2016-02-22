@@ -27,6 +27,7 @@ gem 'responders'
 
 # Authentication
 gem 'devise'
+gem "devise_ldap_authenticatable"
 gem 'omniauth'
 
 # Authorization

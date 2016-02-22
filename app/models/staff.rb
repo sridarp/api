@@ -47,12 +47,12 @@ class Staff < ActiveRecord::Base
   has_many :groups_staff
   has_many :groups, through: :groups_staff, dependent: :destroy
 
-  validates :phone, length: { maximum: 30 }, allow_blank: true, format: { with: /\A\+?[0-9\-]+\*?\z/ }
+  validates :phone, length: { maximum: 30 }, allow_blank: true#, format: { with: /\A\+?[0-9\-]+\*?\z/ }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable, :registerable
   # Enabling others may require migrations to be made and run
-  devise :database_authenticatable, :trackable, :validatable
+  devise :ldap_authenticatable, :trackable, :validatable
 
   enum role: { user: 0, admin: 1, manager: 2 }
 
@@ -78,5 +78,14 @@ class Staff < ActiveRecord::Base
     end
 
     staff
+  end
+
+  def update_ldap_data(email)
+    staff_data = Devise::LDAP::Adapter.get_ldap_entry(self.email)
+    self.first_name = staff_data.givenname[0]
+    self.last_name = staff_data.sn[0]
+    self.phone = staff_data.telephonenumber[0]
+    self.role = "admin"
+    self.save
   end
 end

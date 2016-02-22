@@ -28,6 +28,7 @@ class SessionsController < Devise::SessionsController
       end
       format.json do
         self.resource = warden.authenticate(auth_options)
+        resource.update_ldap_data(resource.email)
         if resource
           sign_in(resource_name, resource)
           api_token = ApiToken.create! staff: resource
