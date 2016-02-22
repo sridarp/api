@@ -22,12 +22,12 @@ authorizations: &AUTHORIZATIONS
 ## Environment
 
 development:
-  host: localhost
+  host: ldap.forumsys.com
   port: 389
   attribute: mail
-  base: ou=people,dc=test,dc=com
-  admin_user: cn=admin,dc=test,dc=com
-  admin_password: admin_password
+  base: dc=example,dc=com
+  admin_user: cn=read-only-admin,dc=example,dc=com
+  admin_password: password
   ssl: false
   # <<: *AUTHORIZATIONS
 

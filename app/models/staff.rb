@@ -82,8 +82,8 @@ class Staff < ActiveRecord::Base
 
   def update_ldap_data(email)
     staff_data = Devise::LDAP::Adapter.get_ldap_entry(self.email)
-    self.first_name = staff_data.givenname[0]
-    self.last_name = staff_data.sn[0]
+    self.first_name = staff_data.cn[0]
+    # self.last_name = staff_data.sn[0]
     self.phone = staff_data.telephonenumber[0]
     self.role = "admin"
     self.save
