@@ -7,10 +7,13 @@ development: &default
   pool: 2
   timeout: 5000
 
-development:
-  <<: *default
-  adapter:  postgresql
-  database: jellyfish_development
+development_sql_server:
+  adapter: sqlserver
+  host: localhost
+  database: jellyfish_sql_development
+  username: username
+  password: password
+  port: 1433
 
 test:
   <<: *default

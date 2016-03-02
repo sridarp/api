@@ -1,4 +1,14 @@
 GIT
+  remote: git://github.com/ShawnsonDFW/JellyFish.git
+  revision: 2a41b49d88128bc36e501b0da2025b919152d623
+  specs:
+    jellyfish-vrealize (0.0.1)
+      activerecord-sqlserver-adapter (~> 4.2.6)
+      bcrypt (~> 3.1)
+      rails (~> 4.2)
+      tiny_tds (~> 0.7.0)
+
+GIT
   remote: git://github.com/neudesic/jellyfish-azure.git
   revision: 64e62a3ca1af4c11a70f9e3af15193e012be51ba
   specs:
@@ -60,6 +70,8 @@ GEM
       activemodel (= 4.2.3)
       activesupport (= 4.2.3)
       arel (~> 6.0)
+    activerecord-sqlserver-adapter (4.2.8)
+      activerecord (~> 4.2.1)
     activerecord_json_validator (1.0.0)
       activerecord (>= 4.2.0, < 5)
       json-schema (~> 2.5)
@@ -152,7 +164,7 @@ GEM
       railties (~> 4.0)
     equalizer (0.0.11)
     erubis (2.7.0)
-    excon (0.45.4)
+    excon (0.46.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.5.0)
@@ -165,12 +177,12 @@ GEM
       http-cookie (~> 1.0.0)
     fastercsv (1.5.5)
     ffi (1.9.10)
-    fog-aws (0.7.6)
+    fog-aws (0.8.1)
       fog-core (~> 1.27)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-core (1.35.0)
+    fog-core (1.36.0)
       builder
       excon (~> 0.45)
       formatador (~> 0.2)
@@ -201,7 +213,7 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
     ice_nine (0.11.1)
-    ipaddress (0.8.0)
+    ipaddress (0.8.3)
     json (1.8.3)
     json-schema (2.5.2)
       addressable (~> 2.3.8)
@@ -374,6 +386,8 @@ GEM
       activerecord
       railties
     timeliness (0.3.7)
+    tiny_tds (0.7.0)
+      mini_portile (= 0.6.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -420,6 +434,7 @@ DEPENDENCIES
   jellyfish-aws!
   jellyfish-azure!
   jellyfish-docker!
+  jellyfish-vrealize!
   license_finder
   omniauth
   paper_trail
