@@ -3,11 +3,11 @@ class RegisteredProvider < ActiveRecord::Base
     def self.load_registered_providers
       return unless super
 
-      transaction do
-        [
-          set('Demo', '3c997248-e35e-408e-a577-3195dfa7f32e')
-        ].each { |s| create! s.merge!(type: 'RegisteredProvider::Demo') }
-      end
+      # transaction do
+      #   [
+      #     set('Demo', '3c997248-e35e-408e-a577-3195dfa7f32e')
+      #   ].each { |s| create! s.merge!(type: 'RegisteredProvider::Demo') }
+      # end
     end
 
     def provider_class

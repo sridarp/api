@@ -52,6 +52,7 @@ class OrdersController < ApplicationController
   def order_params
     params.permit(:project_id, :product_id, service: [:name], answers: [:value, :value_type, :name]).tap do |o|
       o[:service]['answers_attributes'] = o.delete(:answers) || []
+      o[:service]['answers_attributes'].delete_if{ |x| x.empty? }
     end
   end
 
