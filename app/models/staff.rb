@@ -84,7 +84,7 @@ class Staff < ActiveRecord::Base
     staff_data = Devise::LDAP::Adapter.get_ldap_entry(self.email)
     self.first_name = staff_data.cn[0]
     # self.last_name = staff_data.sn[0]
-    self.phone = staff_data.telephonenumber[0]
+    self.phone = staff_data.telephonenumber[0] rescue nil
     self.role = "admin"
     self.save
   end
