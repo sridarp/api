@@ -100,12 +100,10 @@ class Service < ActiveRecord::Base
         if ans.name == "data_center"
           dc_obj = SqlServer::DataCenter.find(ans.value)
           workflow.parameter('dataCenter', dc_obj.Datacenter_Name)
-        end
-        if ans.name == "os"
+        elsif ans.name == "os"
           os_obj = SqlServer::OsType.find(ans.value)
           workflow.parameter('operatingSystem', os_obj.OS_Type_Name)
-        end
-        if ans.name == "template"
+        elsif ans.name == "template"
           template_obj = SqlServer::Template.find(ans.value)
           workflow.parameter('templateName', template_obj.Template_Name)
         end      
@@ -158,6 +156,9 @@ class Service < ActiveRecord::Base
     wf_token = workflow.token(self.vro_workflow_id)
     self.status = (wf_token.state == 'completed') ? 'running' : wf_token.state
     self.save
+    order = self.order
+    order.status = 'completed'
+    order.save
   end
 
   private

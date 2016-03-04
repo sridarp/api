@@ -13,6 +13,7 @@ class OrdersController < ApplicationController
 
   def index
     authorize Order
+    orders.each do {|o| order.service.workflow_status}
     respond_with_params orders, index_respond_options
   end
 
