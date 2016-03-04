@@ -7,6 +7,9 @@ class ProjectServicesController < ApplicationController
   param :per_page, :number
 
   def index
+    if !services.empty?
+      services.each {|s| s.workflow_status}
+    end
     respond_with_params services, each_serializer: ServiceSerializer
   end
 

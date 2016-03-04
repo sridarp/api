@@ -10,6 +10,9 @@ class ServicesController < ApplicationController
 
   def index
     authorize Service
+    if !services.empty?
+      services.each {|s| s.workflow_status}
+    end
     respond_with_params services, index_respond_options
   end
 

@@ -2,15 +2,16 @@
 #
 # Table name: services
 #
-#  id         :integer          not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  type       :string           not null
-#  uuid       :string           not null
-#  name       :string           not null
-#  health     :integer          default(0), not null
-#  status     :integer
-#  status_msg :string
+#  id              :integer          not null, primary key
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  type            :string           not null
+#  uuid            :string           not null
+#  name            :string           not null
+#  health          :integer          default(0), not null
+#  status          :integer
+#  status_msg      :string
+#  vro_workflow_id :string
 #
 # Indexes
 #

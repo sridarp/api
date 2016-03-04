@@ -1,14 +1,4 @@
 GIT
-  remote: git://github.com/ShawnsonDFW/JellyFish.git
-  revision: 2a41b49d88128bc36e501b0da2025b919152d623
-  specs:
-    jellyfish-vrealize (0.0.1)
-      activerecord-sqlserver-adapter (~> 4.2.6)
-      bcrypt (~> 3.1)
-      rails (~> 4.2)
-      tiny_tds (~> 0.7.0)
-
-GIT
   remote: git://github.com/neudesic/jellyfish-azure.git
   revision: 64e62a3ca1af4c11a70f9e3af15193e012be51ba
   specs:
@@ -35,6 +25,16 @@ GIT
     jellyfish-docker (0.0.1)
       bcrypt (~> 3.1)
       rails (~> 4.2)
+
+GIT
+  remote: https://github.com/ShawnsonDFW/JellyFish.git
+  revision: 975e386e42cb9fed4ff0f395ba92f21fe0685162
+  specs:
+    jellyfish-vrealize (0.0.1)
+      activerecord-sqlserver-adapter (~> 4.2.6)
+      bcrypt (~> 3.1)
+      rails (~> 4.2)
+      tiny_tds (~> 0.7.0)
 
 GEM
   remote: https://rubygems.org/
@@ -393,6 +393,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
+    vcoworkflows (0.2.1)
+      rest-client
+      thor (>= 0.18.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -460,6 +463,7 @@ DEPENDENCIES
   test_after_commit
   time_for_a_boolean
   tzinfo-data
+  vcoworkflows
   virtus
   will_paginate (~> 3.0.7)
   wisper

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204071547) do
+ActiveRecord::Schema.define(version: 20160304123457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -364,14 +364,15 @@ ActiveRecord::Schema.define(version: 20151204071547) do
   add_index "service_outputs", ["service_id"], name: "index_service_outputs_on_service_id", using: :btree
 
   create_table "services", force: :cascade do |t|
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.string   "type",                   null: false
-    t.string   "uuid",                   null: false
-    t.string   "name",                   null: false
-    t.integer  "health",     default: 0, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.string   "type",                        null: false
+    t.string   "uuid",                        null: false
+    t.string   "name",                        null: false
+    t.integer  "health",          default: 0, null: false
     t.integer  "status"
     t.string   "status_msg"
+    t.string   "vro_workflow_id"
   end
 
   add_index "services", ["type"], name: "index_services_on_type", using: :btree
