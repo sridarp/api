@@ -43,6 +43,10 @@
       return [service.firstName, service.lastName].join(' ');
     }
 
+    function email() {
+      return service.email;
+    }
+
     function isAdmin() {
       return service.role === 'admin';
     }
