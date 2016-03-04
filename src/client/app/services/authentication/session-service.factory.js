@@ -10,6 +10,7 @@
       create: create,
       destroy: destroy,
       fullName: fullName,
+      email, email,
       isAdmin: isAdmin,
       isManager: isManager
     };

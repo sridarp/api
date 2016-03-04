@@ -7,6 +7,7 @@
     <a class="nav-profile__name" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true"
        role="button" aria-expanded="false">
       {{ ::vm.name }}
+      <input type="hidden" id="staff-email" value="{{ ::vm.email }}"/>
       <i class="nav-profile__arrow fa fa-angle-down"></i>
     </a>
     <ul class="dropdown-menu" role="menu">

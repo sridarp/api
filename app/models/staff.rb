@@ -85,7 +85,7 @@ class Staff < ActiveRecord::Base
     self.first_name = staff_data.cn[0]
     # self.last_name = staff_data.sn[0]
     self.phone = staff_data.telephonenumber[0] rescue nil
-    self.role = "admin"
+    self.role = "admin" if self.sign_in_count == 1
     self.save
   end
 end
