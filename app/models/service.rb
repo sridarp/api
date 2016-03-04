@@ -75,11 +75,6 @@ class Service < ActiveRecord::Base
 
   def workflow_status
     # service = self
-    product = self.product
-    product_ans = product.answers
-    service_ans = self.answers
-
-    provider_ans = self.provider.answers
 
     provider_config_hash = {}
     provider_ans.each do |ans|
@@ -92,72 +87,76 @@ class Service < ActiveRecord::Base
     workflow = VcoWorkflows::Workflow.new('Request Component', id: provider_config_hash["id"], 
                                             url: provider_config_hash["url"],
                                             username: provider_config_hash["username"],
-                                            password: provider_config_hash["password"],
-                                            verify_ssl: false)
+                                              password: provider_config_hash["password"],
+                                              verify_ssl: false)
+    unless self.vro_workflow_id
+      product = service.product
+      product_ans = product.answers
+      service_ans = service.answers
 
-    product_ans.each do |ans|
-      if ans.name == "data_center"
-        dc_obj = SqlServer::DataCenter.find(ans.value)
-        workflow.parameter('dataCenter', dc_obj.Datacenter_Name)
+      provider_ans = service.provider.answers
+
+      product_ans.each do |ans|
+        if ans.name == "data_center"
+          dc_obj = SqlServer::DataCenter.find(ans.value)
+          workflow.parameter('dataCenter', dc_obj.Datacenter_Name)
+        end
+        if ans.name == "os"
+          os_obj = SqlServer::OsType.find(ans.value)
+          workflow.parameter('operatingSystem', os_obj.OS_Type_Name)
+        end
+        if ans.name == "template"
+          template_obj = SqlServer::Template.find(ans.value)
+          workflow.parameter('templateName', template_obj.Template_Name)
+        end      
       end
-      if ans.name == "os"
-        os_obj = SqlServer::Os.find(ans.value)
-        workflow.parameter('operatingSystem', os_obj.OS_Name)
+
+      service_ans.each do |answer|
+        if answer.name == "environment_type"
+          environment_obj = SqlServer::ProdStatus.find(answer.value)
+          workflow.parameter('lifeCycleStatus', environment_obj.Prod_Status_Name)
+        elsif answer.name == "buid"
+          buid_obj = SqlServer::BusinessUnit.find_by_BUID(answer.value)
+          workflow.parameter('serverDB_BUID', buid_obj.BUDesc)
+        elsif answer.name == "cost_center_id"
+          ccid_obj = SqlServer::CostCenter.find_by_CCID(answer.value)
+          workflow.parameter('serverDB_CCID', ccid_obj.CCDesc)
+        elsif answer.name == "domain"
+          domain_obj = SqlServer::Domain.find(answer.value)
+          workflow.parameter('domainString', domain_obj.Domain_Name)
+        elsif answer.name == "backup_nic_required"
+          backup_nic = answer.value == "yes" ? true : false
+          workflow.parameter('backupRequired', backup_nic)
+        elsif answer.name == "primary_role"
+          workflow.parameter('serverRole', answer.value)
+        elsif answer.name == "char3_server_name"
+          workflow.parameter('projectIdentifier', answer.value)
+        elsif answer.name == "vcpus"
+          workflow.parameter('vCPUS', answer.value)
+        elsif answer.name == "ram_in_gb"
+          workflow.parameter('vRAM', answer.value)
+        elsif answer.name == "email_id"
+          workflow.parameter('notificationEmail', answer.value)
+        elsif answer.name == "description"
+          workflow.parameter('serverDescription', answer.value)
+        elsif answer.name == "disk_1_size"
+          workflow.parameter('secondDiskSize', answer.value.to_i)
+        elsif answer.name == "disk_2_size"
+          workflow.parameter('thirdDiskSize', answer.value.to_i)
+        elsif answer.name == "disk_3_size"
+          workflow.parameter('fourthDiskSize', answer.value.to_i)
+        elsif answer.name == "storage_performace_tier"
+          workflow.parameter('storageTier', "Tier#{answer.value}")
+        end
       end
-      if ans.name == "template"
-        template_obj = SqlServer::Template.find(ans.value)
-        workflow.parameter('templateName', template_obj.Template_Name)
-      end      
+      workflow.parameter('needXtraDisks', true)
+      workflow.parameter('serverContact', 'serverContact')
+      workflow.parameter('contactSearchString', 'SearchString')
+      workflow.parameter('serverDBCostCenterString', 'CenterString')
+      self.vro_workflow_id = wf_token.id
     end
-
-    req_service_arr = ["environment_type","buid", "cost_center_id", "domain", "backup_nic_required", "primary_role", "vcpus", "char3_server_name", "ram_in_gb", "email_id", "description", "disk_1_size", "disk_2_size", "disk_3_size", "storage_performace_tier"]
-    service_ans.each do |answer|
-      if answer.name == "environment_type"
-        environment_obj = SqlServer::ProdStatus.find(answer.value)
-        workflow.parameter('lifeCycleStatus', environment_obj.Prod_Status_Name)
-      elsif answer.name == "buid"
-        buid_obj = SqlServer::BusinessUnit.find_by_BUID(answer.value)
-        workflow.parameter('serverDB_BUID', buid_obj.BUDesc)
-      elsif answer.name == "cost_center_id"
-        ccid_obj = SqlServer::CostCenter.find_by_CCID(answer.value)
-        workflow.parameter('serverDB_CCID', ccid_obj.CCDesc)
-      elsif answer.name == "domain"
-        domain_obj = SqlServer::Domain.find(answer.value)
-        workflow.parameter('domainString', domain_obj.Domain_Name)
-      elsif answer.name == "backup_nic_required"
-        backup_nic = answer.value == "yes" ? true : false
-        workflow.parameter('backupRequired', backup_nic)
-      elsif answer.name == "primary_role"
-        workflow.parameter('serverRole', answer.value)
-      elsif answer.name == "char3_server_name"
-        workflow.parameter('projectIdentifier', answer.value)
-      elsif answer.name == "vcpus"
-        workflow.parameter('vCPUS', answer.value)
-      elsif answer.name == "ram_in_gb"
-        workflow.parameter('vRAM', answer.value)
-      elsif answer.name == "email_id"
-        workflow.parameter('notificationEmail', answer.value)
-      elsif answer.name == "description"
-        workflow.parameter('serverDescription', answer.value)
-      elsif answer.name == "disk_1_size"
-        workflow.parameter('secondDiskSize', answer.value)
-      elsif answer.name == "disk_2_size"
-        workflow.parameter('thirdDiskSize', answer.value)
-      elsif answer.name == "disk_3_size"
-        workflow.parameter('fourthDiskSize', answer.value)
-      elsif answer.name == "storage_performace_tier"
-        workflow.parameter('storageTier', "Tier#{answer.value}")
-      end
-    end
-    workflow.parameter('needXtraDisks', true)
-    workflow.parameter('secondDiskSize', 0) unless workflow.parameter('secondDiskSize').value
-    workflow.parameter('thirdDiskSize', 0) unless workflow.parameter('thirdDiskSize').value
-    workflow.parameter('fourthDiskSize', 0) unless workflow.parameter('fourthDiskSize').value
-    workflow.parameter('serverDBCostCenterString', '')
-
-    wf_token = workflow.token(workflow.execute)
+    wf_token = workflow.token(self.vro_workflow_id)
     self.status = wf_token.state
-    self.vro_workflow_id = wf_token.id
     self.save
   end
 
