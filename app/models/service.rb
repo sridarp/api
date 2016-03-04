@@ -76,6 +76,8 @@ class Service < ActiveRecord::Base
   def workflow_status
     # service = self
 
+    provider_ans = self.provider.answers
+
     provider_config_hash = {}
     provider_ans.each do |ans|
       provider_config_hash["id"] = ans.value if ans.name == "access_id"
@@ -90,11 +92,9 @@ class Service < ActiveRecord::Base
                                               password: provider_config_hash["password"],
                                               verify_ssl: false)
     unless self.vro_workflow_id
-      product = service.product
+      product = self.product
       product_ans = product.answers
-      service_ans = service.answers
-
-      provider_ans = service.provider.answers
+      service_ans = self.answers
 
       product_ans.each do |ans|
         if ans.name == "data_center"
@@ -153,10 +153,10 @@ class Service < ActiveRecord::Base
       workflow.parameter('serverContact', 'serverContact')
       workflow.parameter('contactSearchString', 'SearchString')
       workflow.parameter('serverDBCostCenterString', 'CenterString')
-      self.vro_workflow_id = wf_token.id
+      self.vro_workflow_id = workflow.execute
     end
     wf_token = workflow.token(self.vro_workflow_id)
-    self.status = wf_token.state
+    self.status = (wf_token.state == 'completed') ? 'running' : wf_token.state
     self.save
   end
 
